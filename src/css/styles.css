@@ -1,0 +1,245 @@
+/*
+CSS used by CortexMap
+Last update: 27.3.2016
+Author: Robert Ciszek
+Contact: ciszek@uef.fi
+*/
+button#upload {
+	text-align:left;
+	margin-left:8px;
+}
+
+.cortexmap_main {
+	border-radius: 10px;
+	background-color: #eee;
+}
+
+.margin {
+	padding-top:5px;
+	padding-bottom:15px;
+	padding-left:15px;
+	padding-right:15px;
+}
+
+.margin-single-block {
+	padding-top:15px;
+	padding-bottom:15px;
+	padding-left:15px;
+	padding-right:15px;
+}
+
+.navbar-main {
+	background: linear-gradient(rgb(248, 248, 248), rgb(250, 250, 250) 20%, rgb(250, 250, 250) 70%, rgb(238, 238, 238)  );
+
+}
+
+.navbar-main .navbar-nav > .active > a,
+.navbar-main .navbar-nav > .active > a:hover,
+.navbar-main .navbar-nav > .active > a:focus {
+	background: rgb(228, 228, 228);
+	box-shadow: 0px 1px 0px rgb(228, 228, 228) ;
+}
+
+.navbar-main a {
+	color : gray;
+	font-size: 14px;
+}
+
+.navbar-main a#mainNavBrand {
+	font-size: 18px;
+}
+
+.template-div {
+	padding-top:15px;
+	padding-left:15px;
+	padding-bottom:15px;
+	padding-right:15px;
+
+}
+
+.interaction-div {
+	padding-top:15px;
+	padding-bottom:15px;
+	padding-left:15px;
+	padding-right:15px;
+
+	height :100%;
+}
+
+.shadow {
+	-moz-box-shadow: 0 0 2px gray;
+	-webkit-box-shadow: 0 0 2px gray;
+	box-shadow: 0 0 2px gray;
+}
+
+.nopadding {
+	padding-top:0px;
+	padding-bottom:0px;
+	padding-left:0px;
+	padding-right:0px;
+}
+
+.padding-right {
+	padding-right:30px;
+}
+
+.ui-column {
+	padding-top:10px;
+	padding-bottom:10px;
+}
+
+@media (max-width: 1200px) {
+	.padding-right {
+		padding-right:0px;
+		padding-top:20px;
+		padding-bottom:20px;
+	}
+
+	div#interactionDiv {
+		height : 300px;
+	}
+}
+
+
+@media (max-width: 980px) {
+	svg{
+		width : 100%;
+	}
+
+}
+
+
+.dropdown-menu-animal {
+  min-width: 100px;
+}
+
+.dropdown-toggle {   
+    overflow: hidden;
+    padding-right: 24px /* Optional for caret */;
+    text-align: left;
+    text-overflow: ellipsis;    
+    width: 100%;
+}
+
+/* Optional for caret */
+.dropdown-toggle .caret {
+    position: absolute;
+    right: 12px;
+    top: calc(50% - 2px);
+}
+
+.loader {
+	display: none;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 1;
+	margin: -75px 0 0 -75px;
+	border: 14px solid #f3f3f3;
+	border-radius: 50%;
+	border-top: 14px solid gray;
+	border-bottom: 14px solid gray;
+	width: 80px;
+	height: 80px;
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+}
+
+#inputErrorAlert {
+		margin-top: 15px;	
+		display: none;
+}
+
+div#ratioDiv {
+
+	min-height:98%; 
+	height:98%; 
+	min-width:100%; 
+	width:100%; 	
+	overflow-x: hidden;
+	overflow-y: auto;
+	margin-top: 5px;
+	margin-bottom: 15px;
+	padding-left : 0px;
+	padding-right : 0px;
+
+}
+div#resultsDiv {
+	max-width:100%;
+	width:100%;
+	margin-left : -2px;
+	padding-left : 0px;
+	padding-right : 0px;
+
+}
+
+div#interactionDiv {
+	padding-left:20px;
+}
+
+div#saveDiv {
+	padding-left : 3px;
+}
+
+.top-margin { 
+	margin-top:10px; 
+}
+
+#saveButtonGroup {
+	margin-left: 5px;
+}
+
+.lb-sm {
+  font-size: 12px;
+}
+
+.lb-md {
+  font-size: 16px;
+}
+
+#borderColorPickerInput {
+	z-index: 1;
+}
+
+#dpiInput {
+	z-index: 0;
+}
+
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+	}
+
+@media screen and (min-width: 768px) {
+    .narrow-modal {
+        width: 250px; 
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .import-modal {
+        width: 300px; 
+   	overflow-y: auto;
+    }
+}
+
+.pointable {
+    cursor: pointer;
+}
+
+.centered{
+	margin-left: auto;
+	margin-right: auto;
+ 	text-align: center;
+}
+
+#mainUI {
+display: none;
+}
+
+#mainNavBar {
+display: none;
+}
+
+

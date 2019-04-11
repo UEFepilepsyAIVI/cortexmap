@@ -1,0 +1,45 @@
+ <div class="row">
+	<div class="col-lg-10 nopadding padding-right"  id="mapColumn">	
+		<div id="templateDiv" class="cortexmap_main template-div shadow">
+			<div id="template-svg" class="centered"></div>
+		</div>			
+	</div>
+
+	<div class="col-lg-2 nopadding" id="interactionColumn" >
+		<div id="interactionDiv" class="cortexmap_main interaction-div shadow" >
+			<div class="row" id="controlDiv">
+				<div class="btn-group">
+					<button class="btn btn-default" type="button" id="upload" data-toggle="tooltip" title="Select a file">
+						<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span> Open
+					</button>	
+					<button class="btn btn-default" type="button" id="settings" data-toggle="tooltip" title="Display configuration">
+						<span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Config
+					</button>
+				</div>
+			</div>
+			<div class="row" id="resultsDiv">
+				<div id="ratioDiv" class="invisible pre-scrollable">
+				</div>
+			</div>
+			<div class="row" id="saveDiv" >
+				<div class="btn-group" id=saveButtonGroup>
+					<div class="btn-group">
+							
+							<button class="btn btn-default dropdown-toggle invisible" type="button" id="saveTable" data-toggle="dropdown" data-tt="tooltip" aria-haspopup="true" aria-expanded="false" title="Save results as .csv">						
+								<span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>Table
+								<span class="caret"></span>
+							</button>
+
+							<ul class="dropdown-menu" aria-labeledby="saveTable">
+								<li id="downloadTableListItem"><a class="dropdown-item" id="downloadTable" href="#">Ratios</a></li>
+								<li><a class="dropdown-item" id="downloadMeasurements"href="#">Measurements</a></li>
+							</ul>	
+					</div>	
+					<button class="btn btn-default invisible" type="button" value="Save image" id="saveImage" data-toggle="tooltip" title="Save mapped location as image">
+						<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>Image	
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>		

@@ -1,0 +1,238 @@
+ <!DOCTYPE html>
+ <!--Last change: 16.4.2017-->
+ <!--Author: Robert Ciszek-->
+ <!--contact: ciszek@uef.fi-->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel='dns-prefetch' href='//maxcdn.bootstrapcdn.com' />
+<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
+<link rel='dns-prefetch' href='//code.jquery.com' />
+<link rel='dns-prefetch' href='//cdn.polyfill.io' />
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/css/bootstrap-colorpicker.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- build:css css/combined.css -->
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="../node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+<!-- endbuild -->
+
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/js/bootstrap-colorpicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+
+
+<!-- inject:js -->
+<!-- endinject -->
+
+<title>CortexMap</title>
+</head>
+<body>
+
+<div class="loader" id="loaderDiv" ></div>
+<div class="container" >
+	  <nav class="navbar navbar-main shadow" id="mainNavBar">
+	    <a id="mainNavBrand" data-page="analyze.html" class="navbar-brand" href="/">CortexMap</a>
+		  <ul class="nav navbar-nav">
+		    <li class="nav-item active">
+		      <a id="analyzeNavLink" data-page="analyze.html"  class="nav-link" href="#">Analyze</a>
+		    </li>
+		    <li class="nav-item">
+		      <a id="faqNavLink"  data-page="FAQ.html" class="nav-link" href="#">FAQ</a>
+		    </li>
+		    <li class="nav-item">
+		      <a id="aboutNavLink" data-page="about.html" class="nav-link" href="#">About</a>
+		    </li>
+		  </ul>
+	  </nav>
+
+	<div class="margin" id="mainUI"> 
+
+	</div>
+
+<div class="modal fade" id="settingsModal" role="dialog">
+	<div class="modal-dialog narrow-modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Settings</h4>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="row" id="fillColorpickerRow">
+						<label for="fillColorPicker">Fill color</label>
+						<div id="fillColorPicker" class="input-group colorpicker-component">
+						 	<input type="text" value="#ff0000" class="form-control" /> 
+								<span class="input-group-addon"><i></i>
+							</span> 
+						</div>
+					</div>
+					<div class="row top-margin" id="borderColorpickerRow">
+						<label for="borderColorPicker">Border color</label>
+						<div id="borderColorPicker" class="input-group colorpicker-component">
+						 	<input type="text" value="#ff0000" class="form-control" id="borderColorPickerInput" /> 
+								<span class="input-group-addon"><i></i>
+							</span> 
+						</div>
+					</div>
+			  		<div class="row top-margin" id="borderWidthInputGroup">
+
+							<label for="borderWidthInput" >Border width</label>
+
+							<input type="number" class="form-control input-sm" value="1" step="1" id="borderWidthInput" data-toggle="tooltip" min=1 max="20" data-placement="right" title="Lesion border width." data-container="body"">
+							 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="borderWidthInputGlyphIcon"></span>
+					
+
+					</div>
+					<div class="row top-margin" id="borderStyleMenuRow">
+
+							<label for="borderStyleSelect">Border style</label>
+							<select class="selectpicker" id="borderStyleSelect">
+							    <option data-content="<img src='img/Solid.png'>" value="solid" ></option>
+							    <option data-content="<img src='img/Dashed.png'>" value="dashed"></option>
+							    <option data-content="<img src='img/Dotted.png'>" value="dotted"></option>
+							</select>
+						
+					</div>	
+					<div class="row top-margin" id="dpiInputRow">
+					  		<div class="form-group has-feedback" id="dpiInputGroup">
+									<label for="dpiInput" class="control-label lb-sm">DPI</label>
+									<input type="text" class="form-control input-sm" value="0" id="dpiInput" data-toggle="tooltip" data-placement="right" title="Dots per inch of the dowloadable result image." data-container="body"">
+									 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="dpiInputGlyphIcon"></span>
+							</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="modal-footer">
+		 		<button type="button" class="btn btn-default" data-dismiss="modal">
+					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Apply
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="importModal" role="dialog">
+	<div class="modal-dialog import-modal" id="importModalDialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Import</h4>
+			</div>
+			<div class="modal-body" id="importModalBody">
+				<div class="container-fluid">
+					<div class="row">
+						<div id="importedCoordinatesDiv" class="pre-scrollable">
+						</div>
+					</div>
+					<div class="row top-margin">
+						<form class="form-horizontal" >
+							<div class="form-group " id="typeInputGroup">
+								<div class="col-xs-3">
+									<label for="inputTypeRadioButtons" class="lb-sm control-label" >Type:</label>
+								</div>
+								<div class="col-xs-9">
+									<div id="inputTypeRadioButtons" class="btn-group" data-toggle="buttons">
+										<label class="btn btn-primary active btn-sm" id="labelStained">
+									    		<input type="radio" name="inputType" id="inputStained" autocomplete="off" checked>Histology
+									  	</label>
+										<label class="btn btn-primary btn-sm" id="labelMRI" >
+											<input type="radio" name="inputType" id="inputMRI" autocomplete="off">MRI
+										</label>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="row collapse" id="depthInputRow">
+						<form class="form-horizontal" >
+					  		<div class="form-group has-feedback" id="depthInputGroup">
+								<div class="col-xs-3"> 
+									<label for="depthInput" class="control-label lb-sm">Depth</label>
+								</div>
+								<div class="col-xs-6"> 
+									<input type="text" class="form-control input-sm" value="0" id="depthInput" data-toggle="tooltip" data-placement="right" title="Specify slice depth greater than 0 for MRI data." data-container="body"">
+									 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="depthInputGlyphIcon"></span>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+					<div class="row">
+						<form class="form-horizontal" >
+							<div class="form-group " id="contourInputGroup">
+								<div class="col-xs-3">
+									<label for="contourRadioButtons" class="lb-sm control-label">Contour:</label>
+								</div>
+								<div class="col-xs-9">
+									<div id="contourRadioButtons" class="btn-group" data-toggle="buttons">
+										<label class="btn btn-primary active btn-sm" id="labelLinear">
+									    		<input type="radio" name="inputType" id="inputLinear" autocomplete="off" checked>Linear
+									  	</label>
+										<label class="btn btn-primary btn-sm" id="labelSpline" >
+											<input type="radio" name="inputType" id="inputSpline" autocomplete="off">Spline
+										</label>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="row collapse" id="contourInputRow">
+						<form class="form-horizontal" >
+					  		<div class="form-group has-feedback" id="splineAlphaInputGroup">
+								<div class="col-xs-3"> 
+									<label for="splineAlphaInput" class="control-label lb-sm">Alpha:</label>
+								</div>
+								<div class="col-xs-5"> 
+									<input type="text" class="form-control input-sm" value="0" id="splineAlphaInput" data-toggle="tooltip" data-placement="right" title="Alpha value for Catmull-Rom spline" data-container="body"">
+									 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="splineAlphaInputGroup"></span>
+								</div>
+							</div>
+						</form>
+						<form class="form-horizontal" >
+							<div class="form-group has-feedback" id="resolutionInputGroup">
+								<div class="col-xs-3"> 
+									<label for="resolutionInput" class="control-label lb-sm">Resolution:</label>
+								</div>
+								<div class="col-xs-5"> 
+									<input type="text" class="form-control input-sm" value="10" id="resolutionInput" data-toggle="tooltip" data-placement="right" title="Resolution for cardinal spline" data-container="body"">
+									 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="resolutionInputGlyphIcon"></span>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+
+				</div>
+			</div>
+			<div class="modal-footer">
+		 		<button type="button" class="btn btn-default" id="importCoordinatesButton"  data-toggle="tooltip" data-placement="top" title="Import coordinates">
+					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Import
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id ="alertDiv">
+</div>
+<a id="downloadTableLink"></a>
+<a id="downloadImageLink"></a>
+</div>
+<div id="tmp" class="hidden"></div>
+</body>
+</html> 
