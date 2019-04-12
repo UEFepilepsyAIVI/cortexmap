@@ -242,4 +242,14 @@ display: none;
 display: none;
 }
 
+.aboutTextBox {
+	padding-top:15px;
+	padding-bottom:1px;
+	padding-left:25px;
+	padding-right:25px;
+}
 
+#aboutDiv {
+
+	font-size: 16px;
+}
