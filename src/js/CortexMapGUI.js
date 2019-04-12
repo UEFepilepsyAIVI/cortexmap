@@ -85,7 +85,6 @@ var cortexMapGUI = (function(){
 	//Creates a table with the given id based on the data and header provided
 	function makeTable(data, id, headers) {
 
-		//var html = '<table class="table" id="ratioTable"><thead><tr><th>Area</th><th>%</th></tr></thead><tbody>';
 		var html = '<table class="table" id="' + id +'">';
 		html += '<thead><tr>';
 		for (var h = 0; h < headers.length; h++ ) {

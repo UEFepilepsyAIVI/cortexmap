@@ -30,7 +30,6 @@ module.exports = function (self) {
 
 			let rhinalFissureCoordinateList = [];
 			for (row of templateData.rhinalFissure) for (entry of row) rhinalFissureCoordinateList.push(entry);
-			//postDebug("UNITS PER MM: " + parseFloat(templateData.unitsPerMM))
 			let rhinalFissure = Shapes.polyline(rhinalFissureCoordinateList);
 			//Process each bregma level
 			for ( let i = 0; i < coordinates.length; i++ ) {
@@ -39,9 +38,7 @@ module.exports = function (self) {
 				let mValueSum = 0;
 
 				var nearestAtlasLevel = findNeasrestAtlasLevel(coordinates[i][0]);
-				//postDebug("Nearest atlas level: " + nearestAtlasLevel);
 				let translatedY = templateData.YZero - parseFloat(templateData.unitsPerMMY)*coordinates[i][0];
-				//postDebug("Translated Y: " + translatedY);
 				//Draw a line through the image on the level given by Y	
 				let yLine = Shapes.line(0,translatedY, templateSize[0], translatedY );
 
@@ -55,7 +52,7 @@ module.exports = function (self) {
 
 				//For debug
 				borders.push([rfIntersection.points[0].x,translatedY,rfIntersection.points[0].x + nearestAtlasLevel[1]*parseFloat(templateData.unitsPerMM), translatedY ])
-				//borders.push([rfIntersection.points[0].x,translatedY,medialReferenceIntersection, translatedY ])
+
 				var lesionLeft, lesionRight = null;
 				let shrinkageFactor;
 				if ( coordinates[i][3] >= 0 ) {
@@ -64,12 +61,7 @@ module.exports = function (self) {
 						mValueSum +=  coordinates[i][j];
 					}
 					shrinkageFactor = mValueSum / nearestAtlasLevel[1];
-					//shrinkageFactor = mValueSum / ((medialReferenceIntersection-rfIntersection.points[0].x)/parseFloat(templateData.unitsPerMM))
-					//postDebug("ATLAS: " + nearestAtlasLevel + " SUM: " + mValueSum)
-					//postDebug("Shrinkage: " + shrinkageFactor)
-					//postDebug("RF " + rfIntersection.points[0].x)
-					//postDebug("M3 " + parseFloat(coordinates[i][3]) + " IN PIXELS " + parseFloat(coordinates[i][3])*parseFloat(templateData.unitsPerMM))
-					//postDebug("M2 " + parseFloat(coordinates[i][2]) + " IN PIXELS " + parseFloat(coordinates[i][2])*parseFloat(templateData.unitsPerMM))
+
 					//Calculate the lesion X_M1, X_M2 coordinates in the image space
 					lesionLeft = rfIntersection.points[0].x +( ( parseFloat(coordinates[i][3])*parseFloat(templateData.unitsPerMM) ) / shrinkageFactor);
 					lesionRight = lesionLeft + (( parseFloat(coordinates[i][2])*templateData.unitsPerMM ) / shrinkageFactor);
@@ -192,7 +184,7 @@ module.exports = function (self) {
 
 			//Construct a polygon from the left and right side of the lesion
 			polygonCoordinates = leftSide.concat(rightSide);
-			//postDebug(polygonCoordinates)
+
 			if (interpolationSettings != null) { 
 				polygonCoordinates = catmullRomInterpolator(polygonCoordinates,interpolationSettings.splineAlpha,interpolationSettings.splineResolution, true);
 			}
