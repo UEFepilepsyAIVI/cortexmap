@@ -212,8 +212,6 @@ function buildApp() {
     });
 }
 
-console.log(path.resolve(__dirname, '..','dist'));
-
 process.chdir(__dirname + '/../');
 if (!fs.existsSync(path.resolve(__dirname, '..','dist'))) {
   console.log("Folder dist/ empty. Building Cortexmap web app.")  
