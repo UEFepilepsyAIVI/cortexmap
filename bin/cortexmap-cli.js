@@ -2,7 +2,7 @@
 'use strict';
 
 const puppeteer = require('puppeteer');    
-const testFolder = './';
+
 const program = require('commander')
 const fs = require('fs');
 const path = require('path');
@@ -36,7 +36,7 @@ function cli()  {
           fs.open(downloadedFilePath, 'r+', function(err, fd){
               if (!err) {
                   fs.close(fd, function(){       
-                    clearInterval(delInterval); 
+                    clearInterval(delInterval);
                     resolve();
                   });
               }
@@ -62,37 +62,41 @@ function cli()  {
       console.log("Invalid path: " + measurements)
       return;
     }  
-    
+
     (async() => {    
-    
-    const browser = await puppeteer.launch({headless:false,args:['--allow-file-access-from-files']});
-    const page = await browser.newPage();  
-      
-    await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: outputPath});
-
-    page.goto('file:///home/user/Projects/CortexMap/Cortexmap_mouse/dist/index.html')  
-    
-    await page.waitForSelector('#mapColumn',{visible:true})
-
-    await page.evaluate((overrides) => {
-
-      window.CortexMapOverrides  = overrides;
-    
-    }, overrides);
-
-
+  
     if ( directory ) {
-      fs.readdir(testFolder, (err, files) => {
-        for (const file of files) {
-          processFile(page,file);
-        }
+      fs.readdir(measurements,  async (err, files) => {
+          for (const file of files) { 
+            await  processFile(path.resolve(measurements,file));
+          }
+          finish();
       });
+
     }
     else {
-      await processFile(page, measurements);
+      await processFile(measurements);
+      finish();
     }
 
-    async function processFile(page, measurementPath){
+    async function processFile( measurementPath){
+
+      const browser = await puppeteer.launch({headless:true,args:['--allow-file-access-from-files']});
+  
+      const page = await browser.newPage();  
+  
+      await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: outputPath});
+      let indexPath = path.resolve(__dirname, '..','dist/index.html');
+  
+      page.goto("file://" +indexPath);  
+      
+      await page.waitForSelector('#mapColumn',{visible:true})
+  
+      await page.evaluate((overrides) => {
+  
+        window.CortexMapOverrides  = overrides;
+      
+      }, overrides);
 
       var filePath = path.parse(measurementPath);
       console.log("\t" + measurementPath);
@@ -124,15 +128,18 @@ function cli()  {
       await page.click("#downloadTableListItem");
       await fileDownloaded(outputPath + OUTPUT_AREAS_NAME);
       renameFile(OUTPUT_AREAS_NAME,".csv");
-          
+
+      await browser.close();   
     }
 
-    await browser.close();    
-    console.log("Completed.")    
+    async function finish() {
+ 
+      console.log("Completed.");  
+    }
+  
     })();
 
   }
-
 
   if (!program.measurements) {
     console.log("No measurements provided.");
@@ -144,35 +151,46 @@ function cli()  {
     return;
   }
 
-  let fillColor = new RGBColor(program.fillColor);
-  let borderColor = new RGBColor(program.borderColor);
+  let fillColor = program.fillColor;
+  let borderColor = program.borderColor;
 
-  console.log(fillColor);
-
-  if (!fillColor) {
+  try {
+    fillColor = fillColor ? new RGBColor(program.fillColor) : program.fillColor;
+  }
+  catch(err) {
     console.log("Invalid fill color.");
-    return;
   }
 
-  if (!borderColor) {
+  try {
+    borderColor = borderColor ? new RGBColor(program.borderColor) : program.borderColor; 
+  }
+  catch(err) {
     console.log("Invalid border color.");
-    return;
   }
 
-  if (borderWidth < 1 || borderWidth > 20) {
+  if (program.borderWidth && ( program.borderWidth < 1 || program.borderWidth > 20))  {
     console.log("Borderwidth should be");
     return;
   }
 
-  if (borderStyle != "solid" || borderStyle != "dashed" || borderStyle != "dotted") {
+  if (
+        program.borderStyle && (
+        program.borderStyle != "solid" || 
+        program.borderStyle != "dashed" || 
+        program.borderStyle != "dotted"
+        ) 
+      )  {
     console.log("Invalid border style. Accepted values: solid, dashed, dotted.");
     return;
   }
 
-  if ( typeof template == "string" || 
-        !fs.existsSync(__dirname + "../src/data/" + template + "/bregma_level_widths.json") || 
-        !fs.existsSync(__dirname + "../src/data/" + template.toLowerCase() +'/' + template.toLowerCase() + '_map.svg') ) {
-    console.log("Template " + template + " does not exist.");
+  if ( program.template && 
+        ( 
+          typeof program.template == "string" || 
+          !fs.existsSync(__dirname + "../src/data/" + program.template + "/bregma_level_widths.json") || 
+          !fs.existsSync(__dirname + "../src/data/" + program.template.toLowerCase() +'/' + program.template.toLowerCase() + '_map.svg')
+        ) ) {
+    console.log("Template " + program.template + " does not exist.");
     return;
   }
 
@@ -213,6 +231,7 @@ function buildApp() {
 }
 
 process.chdir(__dirname + '/../');
+
 if (!fs.existsSync(path.resolve(__dirname, '..','dist'))) {
   console.log("Folder dist/ empty. Building Cortexmap web app.")  
   buildApp();
