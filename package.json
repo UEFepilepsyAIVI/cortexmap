@@ -1,22 +1,30 @@
 {
-  "name": "Cortexmap",
-  "version": "1.0.0",
-  "description": "Web app for lesion unfolding on mouse cerebral cortex",
-  "main": "./bin/Cortexmap-cli.js",
+  "name": "cortexmap",
+  "version": "1.0.4",
+  "description": "CLI for lesion unfolding on mouse cerebral cortex.",
+  "main": "./bin/cortexmap-cli.js",
   "directories": {
     "example": "examples"
+  },
+  "keywords": [
+    "TBI",
+    "cortex",
+    "neuroscience"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UEFepilepsyAIVI/cortexmap.git"
   },
   "scripts": {
     "test": "mocha --reporter spec",
     "server": "http-server dist"
   },
   "bin": {
-    "Cortexmap-cli": "./bin/Cortexmap-cli.js"
+    "Cortexmap-cli": "./bin/cortexmap-cli.js"
   },
   "author": "rciszek",
   "license": "MIT",
-  "devDependencies": {
-    "area-polygon": "^1.0.1",
+  "dependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
@@ -38,13 +46,10 @@
     "jshint-stylish": "^2.2.1",
     "merge-stream": "^1.0.1",
     "mocha": "^4.1.0",
-    "puppeteer": "^1.11.0",
     "remove": "^0.1.5",
     "run-sequence": "^2.2.1",
     "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^1.1.2"
-  },
-  "dependencies": {
+    "vinyl-source-stream": "^1.1.2",
     "@claviska/jquery-minicolors": "^2.3.4",
     "bootstrap-colorpicker": "^2.5.3",
     "browserify": "^14.5.0",
@@ -65,6 +70,7 @@
     "nodelist-foreach-polyfill": "^1.2.0",
     "npm": "^6.7.0",
     "polygon": "^1.0.2",
+    "puppeteer": "^1.11.0",
     "rgbcolor": "^1.0.1",
     "svg-path-to-polygons": "^0.1.0",
     "uglify-es": "^3.3.10",
