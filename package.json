@@ -1,6 +1,6 @@
 {
   "name": "cortexmap",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "CLI for lesion unfolding on mouse cerebral cortex.",
   "main": "./bin/cortexmap-cli.js",
   "directories": {
@@ -20,7 +20,7 @@
     "server": "http-server dist"
   },
   "bin": {
-    "Cortexmap-cli": "./bin/cortexmap-cli.js"
+    "cortexmap-cli": "./bin/cortexmap-cli.js"
   },
   "author": "rciszek",
   "license": "MIT",
