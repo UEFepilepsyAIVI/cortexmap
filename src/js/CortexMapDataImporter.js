@@ -4,23 +4,14 @@ Contact: ciszek@uef.fi
 */
 var dataImporter = (function() {
 'use strict';
-	const EXPECTED_INPUT_COLUMNS = 4;
+	const EXPECTED_COLUMNS = 4;
+	const LESION = "lesion";
+	const ELECTRODE = "electrode";
 	const FILE_READER_JS_PATH = 'js/fileReaderWorker.js';
 
-	function validateInput(inputId,range) {
-
-		if ( !isValidInputValue( parseFloat( $(inputId).val() ) ,range[0], range[1] ) ) {
-			$(inputId+"Group").addClass("has-error");
-			$(inputId+"GlyphIcon").removeClass("hidden");
-		}
-		else {
-			$(inputId+"Group").removeClass("has-error");
-			$(inputId+"GlyphIcon").addClass("hidden");
-		}
-	}
-
 	//Transforms the textual contents of the csv uploaded by the user to an array of coordinates
-	function csvToArray(csv, expectedColumns) {
+	function csvToArray(csv, format) {
+		let expectedColumns = EXPECTED_COLUMNS;
 
 		var results = [];
 		var array = csv.split('\n');
@@ -28,9 +19,18 @@ var dataImporter = (function() {
 			let currentRow = array[i].split(",");
 			if ( currentRow.length == expectedColumns ) {
 	
-				currentRow = currentRow.map(function(item) { return parseFloat(item, 10);});
-				results[results.length] = currentRow;
 
+				currentRow = currentRow.map(function(item, index) { 
+					if ( format == ELECTRODE && index == EXPECTED_COLUMNS-1) {
+						return item;
+					}
+					else {
+						return parseFloat(item, 10);
+					}
+
+				});
+
+				results[results.length] = currentRow;
 			}
 		}
 		return results;
@@ -44,7 +44,7 @@ var dataImporter = (function() {
 
 		for ( let i = 0; i < rows.length-1; i++) {
 			var columns = rows[i].split(',');
-			if ( columns.length != EXPECTED_INPUT_COLUMNS) {
+			if ( columns.length != EXPECTED_COLUMNS ) {
 				return csv;
 			}
 			var empty = 0;
@@ -76,22 +76,27 @@ var dataImporter = (function() {
 	}
 
 	//Checks if the input is in the expected format
-	function isValidInput(csv) {
-		var valid = true;
+	function determineFormat(csv) {
+		var format = "invalid";
 		var rows = csv.split('\n');
 		for ( var i = 0; i < rows.length-1; i++) {
 			var columns = rows[i].split(',');
-			if ( columns.length != EXPECTED_INPUT_COLUMNS) {
-				return false;
+			if ( columns.length != EXPECTED_COLUMNS ) {
+				return "invalid";
 			}
 			for ( var j = 0; j < columns.length; j++) {
-	
-				if ( isNaN(columns[j]) || columns[j] == '') {
-					return false;
+				if ( (isNaN(columns[j]) && j != EXPECTED_COLUMNS -1) || columns[j] == '') {
+					return "invalid";
 				}
 			}
+			if ( columns[EXPECTED_COLUMNS-1].match(/[a-z]/i)) {
+				format = "electrode";
+			}
+			else {
+				format = "lesion";
+			}			
 		}
-		return valid;
+		return format;
 	}
 
 	function importData(file, importFinishedCallback) {
@@ -102,11 +107,11 @@ var dataImporter = (function() {
 			var csv = e.data;
 			csv = trimEmptyLines(csv);
 			var specified_coordinates = null; 
-			if ( isValidInput(csv) )  {
-				specified_coordinates = csvToArray(csv,EXPECTED_INPUT_COLUMNS);
-			}
-			importFinishedCallback(specified_coordinates);
-			
+			let format = determineFormat(csv);
+			if (format)  {
+				specified_coordinates = csvToArray(csv,format);
+			}		
+			importFinishedCallback(specified_coordinates, format);
 		}, false);
 	}
 

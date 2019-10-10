@@ -5,11 +5,13 @@ Contact: ciszek@uef.fi
 
 var CortexMapTemplate = (function(){
 	'use strict';
+
 	var work = require('webworkify');
 	var mod = require('module');
 
 	var templateSVG = [];
 	var templateSVGDefinition = [];
+	var areas = new Map;
 	var templateData =  {
 		areaData : new Map(),
 		unitsPerMM : [],
@@ -59,7 +61,8 @@ var CortexMapTemplate = (function(){
 		return index+1;
 	}
 	
-	function init(animal,completedCallback) {
+	function init( animal, completedCallback) {
+
 		var ajax = new XMLHttpRequest();
 		ajax.open('GET', './data/' + animal.toLowerCase() +'/' + animal.toLowerCase() + '_map.svg', true);
 		ajax.send();
@@ -73,11 +76,16 @@ var CortexMapTemplate = (function(){
 				}
 				else {
 
-				    	templateData.areaData = ev.data.areaData;
+				    templateData.areaData = ev.data.areaData;
 					templateData.rhinalFissure = ev.data.rhinalFissure;
 					templateData.totalArea = ev.data.totalArea;
-				    	if ( typeof completedCallback === 'function') {
-						completedCallback();
+				    if ( typeof completedCallback === 'function') {
+
+						$.getJSON( "./data/" + animal.toLowerCase() + "/areas.json", function( data ) {
+							areas = new Map;
+							Object.keys ( data ). forEach (k => { areas.set(k, data[k]) });
+							completedCallback();
+						});
 					}
 				}
 			});
@@ -85,7 +93,6 @@ var CortexMapTemplate = (function(){
 				w.postMessage(templateData);
 
 			});
-
 		};
 	}
 
@@ -98,13 +105,17 @@ var CortexMapTemplate = (function(){
 		return templateData;
 	}
 
+	function getAreas() {
+		return areas;
+	}
+
 	return {
 		getTemplateSVG : getTemplateSVG,
 		getTemplateData : getTemplateData,
+		getAreas : getAreas,
 		init : init
 	};
-
-
+	
 })();
 
 module.exports = CortexMapTemplate;

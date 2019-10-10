@@ -13,11 +13,11 @@ var spawn = require('child_process').spawn;
 
 function cli()  {
 
-  const OUTPUT_IMAGE_NAME = "mapped.tiff";
+  const OUTPUT_IMAGE_NAME = "cortexmap_images.zip";
   const OUTPUT_AREAS_NAME = "areas.csv";
 
   program
-    .version('1.0.0')
+    .version('1.0.1')
     .option('-m, --measurements <path>', 'Measurement file or folder')
     .option('-o, --output-path <path>', 'Output path')
     .option('-b, --border-color [bcolor]', 'Border color')
@@ -89,9 +89,9 @@ function cli()  {
       let indexPath = path.resolve(__dirname, '..','dist/index.html');
   
       page.goto("file://" +indexPath);  
-      
-      await page.waitForSelector('#mapColumn',{visible:true})
   
+      await page.waitForSelector('#mapColumn',{visible:true})
+
       await page.evaluate((overrides) => {
   
         window.CortexMapOverrides  = overrides;
@@ -110,8 +110,9 @@ function cli()  {
       await page.keyboard.press('Escape');
 
       await page.waitForSelector("#saveImage",{visible:true});
-      await page.click("#saveImage");
+   
 
+      await page.click("#saveImage");
 
       function renameFile(originalFileName, postFix) {
         fs.rename(outputPath + originalFileName, outputPath + filePath.base + postFix, function(err) {
@@ -120,13 +121,13 @@ function cli()  {
       };
 
       await fileDownloaded(outputPath + OUTPUT_IMAGE_NAME);
-
-      renameFile(OUTPUT_IMAGE_NAME,".tiff");
+      renameFile(OUTPUT_IMAGE_NAME,".zip");
+ 
+      await page.waitForSelector("#saveTable",{visible:true});  
 
       await page.click("#saveTable");
-      await page.waitForSelector('#downloadTableListItem',{visible:true})
-      await page.click("#downloadTableListItem");
-      await fileDownloaded(outputPath + OUTPUT_AREAS_NAME);
+       
+      await fileDownloaded(outputPath + OUTPUT_AREAS_NAME);      
       renameFile(OUTPUT_AREAS_NAME,".csv");
 
       await browser.close();   

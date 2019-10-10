@@ -49,7 +49,8 @@ gulp.task('browserify-and-uglify', function() {
 			.pipe(source('bundle.js'))
 			.pipe(buffer())
 			.pipe(babel({presets: ['env']}))
-			.pipe(uglify()),	
+			.pipe(uglify())
+			,	
 			//Uglify other dependencies
 			gulp.src(LIBS +'*.js')
 			.pipe(babel({presets: ['env']}))

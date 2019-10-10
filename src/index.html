@@ -13,24 +13,38 @@
 <link rel='dns-prefetch' href='//code.jquery.com' />
 <link rel='dns-prefetch' href='//cdn.polyfill.io' />
 
+
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/css/bootstrap-colorpicker.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap.min.css">
 
 <!-- build:css css/combined.css -->
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="../node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
 <!-- endbuild -->
-
+<script src="https://cdn.jsdelivr.net/npm/hacktimer@1.1.3/HackTimer.min.js"></script>
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.1/js/bootstrap-colorpicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flubber/0.4.2/flubber.min.js"></script>
 
 
+<!-- Required to convert named colors to RGB -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/1.4/rgbcolor.min.js"></script>
+<!-- Optional if you want blur -->
+<script src="https://cdn.jsdelivr.net/npm/stackblur-canvas@^1/dist/stackblur.min.js"></script>
+<!-- Main canvg code -->
+<script src="https://cdn.jsdelivr.net/npm/canvg/dist/browser/canvg.min.js"></script>
 
 <!-- inject:js -->
 <!-- endinject -->
@@ -40,26 +54,31 @@
 <body>
 
 <div class="loader" id="loaderDiv" ></div>
-<div class="container" >
-	  <nav class="navbar navbar-main shadow" id="mainNavBar">
-	    <a id="mainNavBrand" data-page="analyze.html" class="navbar-brand" href="/">CortexMap</a>
-		  <ul class="nav navbar-nav">
-		    <li class="nav-item active">
-		      <a id="analyzeNavLink" data-page="analyze.html"  class="nav-link" href="#">Analyze</a>
-		    </li>
-		    <li class="nav-item">
-		      <a id="faqNavLink"  data-page="FAQ.html" class="nav-link" href="#">FAQ</a>
-		    </li>
-		    <li class="nav-item">
-		      <a id="aboutNavLink" data-page="about.html" class="nav-link" href="#">About</a>
-		    </li>
-		  </ul>
-	  </nav>
-
-	<div class="margin" id="mainUI"> 
+<nav class="navbar navbar-main shadow" id="mainNavBar">
+	<div class = "container">
+		<div  id = "navbarContent">
+				<a id="mainNavBrand" data-page="analyze.html" class="navbar-brand" href="/">CortexMap</a>
+				<ul class="nav navbar-nav">
+					<li class="nav-item">
+					<a id="faqNavLink"  data-page="FAQ.html" class="nav-link" href="#">FAQ</a>
+					</li>
+					<li class="nav-item">
+					<a id="aboutNavLink" data-page="about.html" class="nav-link" href="#">About</a>
+					</li>
+				</ul>
+		</div>
 
 	</div>
 
+</nav>
+<div class="container" >
+
+		
+
+
+<div class="margin" id="mainUI"> 
+
+</div>
 <div class="modal fade" id="settingsModal" role="dialog">
 	<div class="modal-dialog narrow-modal">
 		<div class="modal-content">
@@ -104,14 +123,31 @@
 							</select>
 						
 					</div>	
+					<div class="row top-margin collapse" id="electrodeColorpickerRow">
+						<label for="electrodeColorPicker">Electrode color</label>
+						<div id="electrodeColorPicker" class="input-group colorpicker-component">
+						 	<input type="text" value="#ff0000" class="form-control" id="electrodeColorPickerInput" /> 
+								<span class="input-group-addon"><i></i>
+							</span> 
+						</div>
+					</div>					
+					<div class="row top-margin collapse" id="electrodeRadiusInputGroup">
+						<label for="electrodeRadiusInput" >Electrode radius</label>
+						<input type="number" class="form-control input-sm" value="5" step="1" id="electrodeRadiusInput" data-toggle="tooltip" min=1 max="10" data-placement="right" title="Electrode radius." data-container="body"">
+						 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="electrodeRadiusInputGlyphIcon"></span>
+					</div>	
+					<div class="row top-margin collapse" id="electrodeLabelSizeInputGroup">
+						<label for="electrodeLabellSizeInput" >Electrode radius</label>
+						<input type="number" class="form-control input-sm" value="14" step="1" id="electrodeLabelSizeInput" data-toggle="tooltip" min=8 max="28" data-placement="right" title="Electrode radius." data-container="body"">
+						 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="electrodeLabelSizeInputGlyphIcon"></span>
+					</div>										
 					<div class="row top-margin" id="dpiInputRow">
 					  		<div class="form-group has-feedback" id="dpiInputGroup">
 									<label for="dpiInput" class="control-label lb-sm">DPI</label>
 									<input type="text" class="form-control input-sm" value="0" id="dpiInput" data-toggle="tooltip" data-placement="right" title="Dots per inch of the dowloadable result image." data-container="body"">
-									 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="dpiInputGlyphIcon"></span>
+									<span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="dpiInputGlyphIcon"></span>
 							</div>
 					</div>
-
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -136,7 +172,7 @@
 						<div id="importedCoordinatesDiv" class="pre-scrollable">
 						</div>
 					</div>
-					<div class="row top-margin">
+					<div class="row top-margin" id="typeInputRow">
 						<form class="form-horizontal" >
 							<div class="form-group " id="typeInputGroup">
 								<div class="col-xs-3">
@@ -145,10 +181,10 @@
 								<div class="col-xs-9">
 									<div id="inputTypeRadioButtons" class="btn-group" data-toggle="buttons">
 										<label class="btn btn-primary active btn-sm" id="labelStained">
-									    		<input type="radio" name="inputType" id="inputStained" autocomplete="off" checked>Histology
+									    		<input type="radio" name="inputType" id="inputStained" autocomplete="off" checked value="Hist.">Histology
 									  	</label>
 										<label class="btn btn-primary btn-sm" id="labelMRI" >
-											<input type="radio" name="inputType" id="inputMRI" autocomplete="off">MRI
+											<input type="radio" name="inputType" id="inputMRI" autocomplete="off" value="MRI">MRI
 										</label>
 									</div>
 								</div>
@@ -171,7 +207,7 @@
 						</form>
 					</div>
 
-					<div class="row">
+					<div class="row" id="contourInputButtonRow">
 						<form class="form-horizontal" >
 							<div class="form-group " id="contourInputGroup">
 								<div class="col-xs-3">
@@ -216,7 +252,21 @@
 
 						</form>
 					</div>
-
+					<div class="row" id="timeInputRow">
+							<form class="form-horizontal" >
+								  <div class="form-group has-feedback" id="timeInputGroup">
+									<div class="col-xs-3"> 
+										<label for="timeInput" class="control-label lb-sm">Day:</label>
+									</div>
+									<div class="col-xs-4"> 
+										<input type="text" class="form-control input-sm" value="1" id="timeInput" data-toggle="tooltip" data-placement="right" title="Specify the time point of the first measurement" data-container="body"">
+										 <span class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true" id="depthInputGlyphIcon"></span>
+									</div>
+	
+								</div>
+	
+							</form>
+						</div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -228,10 +278,24 @@
 	</div>
 </div>
 
-<div id ="alertDiv">
-</div>
+<div class="modal modaProgressBar" data-backdrop="static"  data-keyboard="false">
+	<div class="modal-dialog modal-sm">
+	  <div class="modal-content">
+		<div class="modal-body">
+		<div id = "loadingBarLabel" class="glowingText">Encoding...</div>
+		  <div class="progress progress-popup">
+			<div class="progress-bar progress-bar-striped active" role="progressbar"></div>
+			
+		  </div>
+		</div>
+	  </div>
+	</div>
+   </div>
+
+
 <a id="downloadTableLink"></a>
 <a id="downloadImageLink"></a>
+<div id="tooltip"><span>test</span></div>
 </div>
 <div id="tmp" class="hidden"></div>
 </body>

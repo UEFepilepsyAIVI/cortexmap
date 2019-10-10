@@ -9,10 +9,12 @@ let Intersection = lib.Intersection;
 let Shapes = lib.Shapes;
 let catmullRomInterpolator = require('catmull-rom-interpolator')
 'use strict';
+
+
 module.exports = function (self) {
 
-	self.addEventListener('message', function(e) {	
-
+	self.addEventListener('message', function(e) {
+		
 		var debug = {};
 		debug.debug = true;
 		let TOTAL_AREA_LABEL = 'Total';
@@ -27,13 +29,11 @@ module.exports = function (self) {
 			var leftSide = [];
 			var borders = [];
 
-
 			let rhinalFissureCoordinateList = [];
 			for (row of templateData.rhinalFissure) for (entry of row) rhinalFissureCoordinateList.push(entry);
 			let rhinalFissure = Shapes.polyline(rhinalFissureCoordinateList);
 			//Process each bregma level
 			for ( let i = 0; i < coordinates.length; i++ ) {
-
 
 				let mValueSum = 0;
 
@@ -57,7 +57,7 @@ module.exports = function (self) {
 				let shrinkageFactor;
 				if ( coordinates[i][3] >= 0 ) {
 					//Sum up the M1, M2 and M3 distances
-					for ( let j = 1; j < coordinates[i].length; j++) {
+					for ( let j = 1; j < coordinates[i].length-1; j++) {
 						mValueSum +=  coordinates[i][j];
 					}
 					shrinkageFactor = mValueSum / nearestAtlasLevel[1];
@@ -77,8 +77,8 @@ module.exports = function (self) {
 				measurementTable.push([coordinates[i][0],coordinates[i][1],coordinates[i][2],coordinates[i][3], mValueSum]);
 
 				//Add the coordinates of the left and right side of the lesion to corresponding list
-				leftSide.push( [ lesionLeft, translatedY ] );
-				rightSide.push( [ lesionRight, translatedY ] );	
+				leftSide.push( [ lesionLeft, translatedY,coordinates[i][4]] );
+				rightSide.push( [ lesionRight, translatedY,coordinates[i][4]] );	
 
 
 			}
@@ -146,11 +146,11 @@ module.exports = function (self) {
 			}
 
 
-			function contourToShape(contour) {
+			function contourToShape(contour,scaleFactor = 1.0) {
 				var polygonPath = [[]]; 
 
 				for (var i = 0; i < contour.length; i++) {
-					polygonPath[0].push( { X : parseFloat(contour[i][0]), Y : parseFloat(contour[i][1]) });
+					polygonPath[0].push( { X : parseFloat(contour[i][0])*scaleFactor, Y : parseFloat(contour[i][1])*scaleFactor });
 				}
 				return new Shape(polygonPath, closed = true);
 			}
@@ -164,20 +164,27 @@ module.exports = function (self) {
 			function calculateEffectedAreas(contour, templateData) {
 				let effectedAreas = new Map();
 				let totalEffectedArea = 0;
+				const SCALE_FACTOR = 100.0;
+				let scaledContour = contourToShape(contour,SCALE_FACTOR)
 				templateData.areaData.forEach( function(entry, name) {
 
-					let intersection = new Shape(entry.polygon, true).intersect(contour );	
-					let percent = ( intersection.totalArea() / entry.area )*100;
 
-					let squareMM = intersection.totalArea()*Math.pow(Math.pow(templateData.unitsPerMM,-1),2);
-					if ( roundToDecimal(percent) > 0 ) {
-						effectedAreas.set(name,[ roundToDecimal(percent, decimals=0), roundToDecimal(squareMM)]);
-						totalEffectedArea += intersection.totalArea();	
-					}
+					let scaledPolygon = [entry.polygon[0].map( (d) => { return { X: d.X*SCALE_FACTOR, Y: d.Y*SCALE_FACTOR }})]				
+					let intersection = new Shape(scaledPolygon, true).intersect(scaledContour );	
+
+					let polygonTotalArea = Math.abs(new Shape(scaledPolygon,true).totalArea());
+
+					let percent = (  intersection.totalArea() / polygonTotalArea )*100;
+
+					let squareMM = intersection.totalArea()*Math.pow(Math.pow(templateData.unitsPerMM*100,-1),2);
+
+					effectedAreas.set(name,[ roundToDecimal(percent, decimals=1), roundToDecimal(squareMM)]);
+					totalEffectedArea += intersection.totalArea() / (SCALE_FACTOR*SCALE_FACTOR);	
+			
 
 				});
 				let totalEffectAreaPercent = (totalEffectedArea/ templateData.totalArea)*100;
-				let totalEffectAreaMM = totalEffectedArea*Math.pow(Math.pow(templateData.unitsPerMM,-1),2);
+				let totalEffectAreaMM = totalEffectedArea*Math.pow(Math.pow(templateData.unitsPerMM*SCALE_FACTOR,-1),2);
 				effectedAreas.set(TOTAL_AREA_LABEL,[roundToDecimal(totalEffectAreaPercent,decimals=0), roundToDecimal(totalEffectAreaMM)]);
 				return effectedAreas
 			}
@@ -191,7 +198,7 @@ module.exports = function (self) {
 			lesionPolygon = contourToShape(polygonCoordinates);
 
 
-			effectedAreas = calculateEffectedAreas(lesionPolygon,e.data.templateData, e.data.interpolationSettings)
+			effectedAreas = calculateEffectedAreas(polygonCoordinates,e.data.templateData, e.data.interpolationSettings)
 			
 			return { effectedAreas : effectedAreas, lesionPolygon : polygonCoordinates, measurementTable : measurementTable, borders : borders };
 		}

@@ -18,7 +18,7 @@ var cortexMapper = (function(){
 
 	const MAPPER_WORKER_PATH = './workers/mapperWorker.js';
 
-	const CANVAS_SIZE_FACTOR = 2;
+	const CANVAS_SIZE_FACTOR = 4;
 
 	//Calculates the areas affected by the lesion.
 	function performAnalysis(analysisFinishedCallback) {
@@ -42,6 +42,7 @@ var cortexMapper = (function(){
 
 		return resultArray;
 	}
+
 	
 	function performMapping(importedCoordinates,interpolationSettings, sliceDepth, mappingFinishedCallback) {
 
@@ -75,8 +76,6 @@ var cortexMapper = (function(){
 
 		importWorker.postMessage(importData);
 	}
-	
-
 
 	function getCoordinates() {
   		return coordinates;
@@ -105,15 +104,21 @@ var cortexMapper = (function(){
 
 	}
 
-	function paintMapToCanvas( downloadImageCanvas, mapElement, callback) {
+	function paintMapToCanvas( downloadImageCanvas, mapElement, width, height, callback, scale=false,time=null) {
 
 		let ctx = downloadImageCanvas.getContext("2d");
-		downloadImageCanvas.width = template.getTemplateSVG()[2].getAttribute("width")*CANVAS_SIZE_FACTOR;
-		downloadImageCanvas.height = template.getTemplateSVG()[2].getAttribute("height")*CANVAS_SIZE_FACTOR;
+		if (scale) {
 
-		let drawnSVG = $(mapElement.svg());
+			downloadImageCanvas.width = width*CANVAS_SIZE_FACTOR;
+			downloadImageCanvas.height = height*CANVAS_SIZE_FACTOR;
+		}
+
+		let drawnSVG = $(mapElement);
+
 		drawnSVG.attr('width', downloadImageCanvas.width);
 		drawnSVG.attr('height', downloadImageCanvas.height);
+		drawnSVG.each(function () { $(this)[0].setAttribute('viewBox', "0 0 " + width + " " + height) });
+
 
 		ctx.beginPath();
 		ctx.rect(0, 0, downloadImageCanvas.width , downloadImageCanvas.height);
@@ -121,7 +126,7 @@ var cortexMapper = (function(){
 		ctx.fill();
 
 		var svgString = new XMLSerializer().serializeToString(drawnSVG[0]);
-		
+
 		svgString = svgString.replace( /xmlns:xml="[A-Za-z0-9/:#-.]*"/gi,'');
 		svgString = svgString.replace( />\/svg>/gi,'></svg>');	
 		
@@ -130,18 +135,23 @@ var cortexMapper = (function(){
 		var img = new Image();
 		var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
 		var url = DOMURL.createObjectURL(svg);
-
-
 		img.onload = function() {
 			ctx.drawImage(img, 0, 0);
-		    	DOMURL.revokeObjectURL(url);
-		    	callback(downloadImageCanvas);
+			DOMURL.revokeObjectURL(url);
+			
+
+			if ( time !== null ) {
+				ctx.font = "bold 80px serif";
+				ctx.fillStyle = "black";
+				ctx.fillText("Day " + time, 80, 100); 
+			}
+
+			callback(downloadImageCanvas);
 		};
-		img.src = url;
+
+		img.src = url
 
 	}
-	
-
 
 	return {
 		getCoordinates : getCoordinates,
