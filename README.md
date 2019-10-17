@@ -3,7 +3,7 @@ The localization of traumatic brain injury (TBI) lesions directly correlates wit
 
 CortexMap is a web application to estimate the location of the lesion on mouse cerebral cortex caused by TBI induced by lateral fluid-percussion injury. The application unfolds user-determined TBI lesion measurements, e.g., from histologic sections to a reference template, and estimates the total lesion area, including the percentage of cortex damaged in different cytoarchitectural cortical regions.
 
-For off-line use, CortexMap is also available as a command-line application through npm.
+For off-line use, CortexMap is also available as a command-line application.
 
 
 ## Web application
