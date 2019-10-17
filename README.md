@@ -42,7 +42,7 @@ npm install cortexmap-cli -g
 |-t, --template|	Path to the template used in mapping. *Optional.*|
 
 
-### Example
+### Example usage
 ```
 cortexmap-cli -m ./measurements/001_day_1.csv -o ./mapping-results/
 ```
