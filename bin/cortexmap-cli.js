@@ -15,15 +15,17 @@ function cli()  {
 
   const OUTPUT_IMAGE_NAME = "cortexmap_images.zip";
   const OUTPUT_AREAS_NAME = "areas.csv";
+  const DEFAULT_TIMEPOINT = "0";
 
   program
-    .version('1.0.1')
+    .version('1.0.2')
     .option('-m, --measurements <path>', 'Measurement file or folder')
+    .option('-t, --timepoints <timepoints>', 'Measurement file or folder')
     .option('-o, --output-path <path>', 'Output path')
     .option('-b, --border-color [bcolor]', 'Border color')
     .option('-f, --fill-color [acolor]', 'Area color')
     .option('-w, --border-width [width]', 'Border width')  
-    .option('-t, --template [template]', 'Template SVG')  
+    .option('-m, --map [map]', 'Map template SVG')  
     .option('-d, --dpi [dpi]', 'Image DPI')  
     .parse(process.argv);
 
@@ -52,30 +54,70 @@ function cli()  {
   }
 
 
-  function processMeasurements(measurements, outputPath, overrides) {
+  function valuesDuplicated(array) {
+    return (new Set(array)).size !== array.length;
+  }
+
+
+  function processMeasurements(measurements, timePoints, outputPath, overrides) {
+
+    let measurementData = measurements.split(',');
+    let isTimeseries = false;
+
+    if ( valuesDuplicated(measurementData)) {
+      console.log("ERROR: Duplicated measurement file.");
+      return;
+    }
+
+    if ( timePoints !== undefined ) {
+      timePoints = timePoints.split(',');
+      isTimeseries = true;
+      if ( valuesDuplicated(timePoints) ) {
+        console.log("ERROR: Duplicated timepoint.");
+        return;
+      }      
+    }
+    else {
+      timePoints = [];
+      measurementData.forEach((x)=> { timePoints.push(DEFAULT_TIMEPOINT)});
+    }
+
+    measurementData = measurementData.map( (value, index) => {
+      return [value,timePoints[index]];
+    });
 
     let directory = false;  
-    try {
-      directory = fs.lstatSync(measurements).isDirectory()
+    if ( measurementData.length == 1 ) {
+      try {
+        directory = fs.lstatSync(measurementData[0][0]).isDirectory()
+      }
+      catch(err){
+        console.log("Invalid path: " + measurementData[0][0])
+        return;
+      } 
     }
-    catch(err){
-      console.log("Invalid path: " + measurements)
-      return;
-    }  
-
+ 
     (async() => {    
   
     if ( directory ) {
       fs.readdir(measurements,  async (err, files) => {
           for (const file of files) { 
-            await  processFile(path.resolve(measurements,file));
+            await  processFile([path.resolve(measurements,file)]);
           }
           finish();
       });
-
     }
     else {
-      await processFile(measurements);
+      
+      if ( isTimeseries ) {
+        await processFile(measurementData);
+      }
+      else {
+        for (const dataEntry of measurementData ) {
+          await processFile([dataEntry]);
+        };
+      }
+
       finish();
     }
 
@@ -98,21 +140,49 @@ function cli()  {
       
       }, overrides);
 
-      var filePath = path.parse(measurementPath);
-      console.log("\t" + measurementPath);
+      for ( const file of measurementPath ) {
 
-      await page.click("#upload");
-      const fileUploaders = await page.$$("input[type=file]");
-      
-      fileUploaders[0].uploadFile(measurementPath)
-      await page.waitForSelector('#importModal',{visible:true})
-      await page.click("#importCoordinatesButton");
-      await page.keyboard.press('Escape');
+        var filePath = path.parse(file[0]);
+        console.log("\t" + file[0]);
 
+        let fileSelected = false;
+        while(!fileSelected) {
+          try {
+            const [fileChooser] = await Promise.all([
+              page.waitForFileChooser({timeout:1000}),
+              page.click('#upload'), 
+            ]);
+            await fileChooser.accept([file[0]]);
+
+            fileSelected = true;
+          }
+          catch( err ) {
+            
+          }
+        }
+
+        await page.waitForSelector('#importModal',{visible:true})
+        await page.type('#timeInput', file[1], {delay: 20})
+        await page.click("#importCoordinatesButton");
+        await page.keyboard.press('Escape');
+        await page.waitForSelector('#importModal',{hidden:true})
+      }
+
+      let imagesDownloaded = false;
       await page.waitForSelector("#saveImage",{visible:true});
-   
-
       await page.click("#saveImage");
+      while ( !imagesDownloaded ) {
+        try {
+          await page.click("#saveImage");
+          await page.waitForSelector(".modalProgressBar",{visible:true,timeout:1000});  
+          await page.waitForSelector(".modalProgressBar",{hidden:true,timeout:1000});  
+          imagesDownloaded = true;
+        }
+        catch(err) {
+
+        }
+
+      }
 
       function renameFile(originalFileName, postFix) {
         fs.rename(outputPath + originalFileName, outputPath + filePath.base + postFix, function(err) {
@@ -122,11 +192,11 @@ function cli()  {
 
       await fileDownloaded(outputPath + OUTPUT_IMAGE_NAME);
       renameFile(OUTPUT_IMAGE_NAME,".zip");
- 
+
       await page.waitForSelector("#saveTable",{visible:true});  
 
       await page.click("#saveTable");
-       
+
       await fileDownloaded(outputPath + OUTPUT_AREAS_NAME);      
       renameFile(OUTPUT_AREAS_NAME,".csv");
 
@@ -208,7 +278,7 @@ function cli()  {
 
   if (fs.existsSync(program.outputPath)) {
     console.log("Processing files:")
-    processMeasurements(program.measurements, program.outputPath, CortexMapOverrides);  
+    processMeasurements(program.measurements, program.timepoints,program.outputPath, CortexMapOverrides);  
   }
   else{
     console.log("Output path does not exist.");

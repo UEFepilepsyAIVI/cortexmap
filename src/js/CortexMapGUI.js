@@ -78,12 +78,12 @@ var cortexMapGUI = (function(){
 
 		init() {
 
-			$('.modaProgressBar').modal({
+			$('.modalProgressBar').modal({
 				backdrop: "static",
 				show: false
 			});
 
-			this.modal = $('.modaProgressBar'),
+			this.modal = $('.modalProgressBar'),
 			this.bar = this.modal.find('.progress-bar');
 		};
 
@@ -750,6 +750,8 @@ var cortexMapGUI = (function(){
 		}		
 
 		var table = makeTable(importedCoordinates,'Coordinates',tableHeader);
+
+		
 		$("#importedCoordinatesDiv").empty();
 		$("#importedCoordinatesDiv").append(table);
 
@@ -1730,7 +1732,6 @@ var cortexMapGUI = (function(){
 	}
 
 	function resizeUI() {
-		var controlDivHeight = $("#controlDiv").height();
 
 		let svg = document.getElementsByTagName('svg')[0];
 		let aspectRatio = svg.getAttribute('height') / svg.getAttribute('width');
