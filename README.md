@@ -32,14 +32,15 @@ npm install cortexmap-cli -g
 ### Command-line parameters
 |Parameter	| Description |
 |:----------|:------------|
-|-m, --measurements|Path to the measurement file or to a folder containing measurements. *Optional.*|
+|-m, --measurements| Path to the measurement file, comma separated list of measurement file paths, or path to a folder containing measurements.|
 |-o, --output-path|	Output folder for mappings and area measurements. *Optional.*|
+|-t, --timepoints|	Comma separated list of measurement timepoints as integeres *Optional.*|
 |-b, --border-color|	Lesion border color as RGBA quadruplet, e.g. 0,0,0,255,1.  *Optional.*|
 |-f, --fill-color|	Lesion fill color as RGBA quadruplet, e.g. 0,0,0,255,1.  *Optional.*|
 |-w, --border-width|	Lesion border width as an integer value between 1 and 20.  *Optional.*|
 |-s, --border-style|	Lesion border style. Accepted values are “solid”, “dashed” or “dotted”.  *Optional.*|
 |-d, --dpi|	Output image dpi. *Optional.*|
-|-t, --template|	Path to the template used in mapping. *Optional.*|
+|-c, --cortexmap|	Path to the cortex map template used in mapping. *Optional.*|
 
 
 ### Example usage
