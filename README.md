@@ -35,8 +35,8 @@ npm install cortexmap-cli -g
 |-m, --measurements| Path to the measurement file, comma separated list of measurement file paths, or path to a folder containing measurements.|
 |-o, --output-path|	Output folder for mappings and area measurements. *Optional.*|
 |-t, --timepoints|	Comma separated list of measurement timepoints as integeres *Optional.*|
-|-b, --border-color|	Lesion border color as RGBA quadruplet, e.g. 0,0,0,255,1.  *Optional.*|
-|-f, --fill-color|	Lesion fill color as RGBA quadruplet, e.g. 0,0,0,255,1.  *Optional.*|
+|-b, --border-color|	Lesion border color as RGBA quadruplet, e.g. 0,0,255,1.  *Optional.*|
+|-f, --fill-color|	Lesion fill color as RGBA quadruplet, e.g. 0,0,255,1.  *Optional.*|
 |-w, --border-width|	Lesion border width as an integer value between 1 and 20.  *Optional.*|
 |-s, --border-style|	Lesion border style. Accepted values are “solid”, “dashed” or “dotted”.  *Optional.*|
 |-d, --dpi|	Output image dpi. *Optional.*|
@@ -51,10 +51,13 @@ cortexmap-cli -m ./measurements/001_day_1.csv -o ./mapping-results/
 
 Mapping a time series of measurements:
 ```
-cortexmap-cli -m ./measurements/001_day_1.csv,./measurements/001_day_7.csv,./measurements/001_day_14.csv -o ./mapping-results/
+cortexmap-cli -m ./measurements/001_day_1.csv,./measurements/001_day_7.csv,./measurements/001_day_14.csv \
+-o ./mapping-results/
 ```
 
-Mapping a time series of measurements:
+Mapping a time series of measurements, with blue fill color:
 ```
-cortexmap-cli -m ./measurements/001_day_1.csv,./measurements/001_day_7.csv,./measurements/001_day_14.csv -o ./mapping-results/
+cortexmap-cli -m ./measurements/001_day_1.csv,./measurements/001_day_7.csv,./measurements/001_day_14.csv \
+-f 255,0,0,1 \
+-o ./mapping-results/
 ```
