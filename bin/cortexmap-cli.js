@@ -25,7 +25,7 @@ function cli()  {
     .option('-b, --border-color [bcolor]', 'Border color')
     .option('-f, --fill-color [acolor]', 'Area color')
     .option('-w, --border-width [width]', 'Border width')  
-    .option('-m, --map [map]', 'Map template SVG')  
+    .option('-c, --cortexmap [map]', 'Cortexmap template SVG')  
     .option('-d, --dpi [dpi]', 'Image DPI')  
     .parse(process.argv);
 
