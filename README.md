@@ -44,6 +44,17 @@ npm install cortexmap-cli -g
 
 
 ### Example usage
+Mapping a single measurement:
 ```
 cortexmap-cli -m ./measurements/001_day_1.csv -o ./mapping-results/
+```
+
+Mapping a time series of measurements:
+```
+cortexmap-cli -m ./measurements/001_day_1.csv,./measurements/001_day_7.csv,./measurements/001_day_14.csv -o ./mapping-results/
+```
+
+Mapping a time series of measurements:
+```
+cortexmap-cli -m ./measurements/001_day_1.csv,./measurements/001_day_7.csv,./measurements/001_day_14.csv -o ./mapping-results/
 ```
